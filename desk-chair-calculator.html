@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>데스크 셋업 계산기</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #3396D3 0%, #EBCB90 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            gap: 40px;
+        }
+
+        .container {
+            background: #FFF0CE;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            padding: 40px;
+            max-width: 500px;
+            width: 100%;
+            text-align: center;
+            flex-shrink: 0;
+        }
+
+        .furniture-visual {
+            display: flex;
+            flex-direction: row;
+            align-items: flex-end;
+            justify-content: center;
+            height: 400px;
+            min-width: 440px;
+            background: rgba(255, 240, 206, 0.3);
+            border-radius: 15px;
+            padding: 20px;
+            backdrop-filter: blur(10px);
+            gap: 120px;
+        }
+
+        .chair {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            transition: all 0.5s ease;
+        }
+
+
+        .chair-leg-left {
+            width: 6px;
+            background: #333;
+            height: var(--chair-height, 80px);
+            position: absolute;
+            left: -35px;
+            bottom: 0px;
+        }
+
+        .chair-leg-right {
+            width: 6px;
+            background: #333;
+            height: var(--chair-height, 80px);
+            position: absolute;
+            right: -35px;
+            bottom: 0px;
+        }
+
+        .chair-seat {
+            width: 60px;
+            height: 8px;
+            background: #333;
+            position: absolute;
+            left: -30px;
+            bottom: var(--chair-height, 80px);
+            transition: all 0.5s ease;
+        }
+
+        .hamster {
+            width: 120px;
+            height: 120px;
+            position: absolute;
+            left: -60px;
+            bottom: calc(var(--chair-height, 80px) + 8px - 14px);
+            transition: all 0.5s ease;
+            background-image: url('https://pngimg.com/d/hamster_PNG40.png');
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+        }
+
+        .desk {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            transition: all 0.5s ease;
+        }
+
+        .desk-leg-left {
+            width: 6px;
+            background: #333;
+            height: var(--desk-height, 150px);
+            position: absolute;
+            left: -50px;
+            bottom: 0px;
+        }
+
+        .desk-leg-right {
+            width: 6px;
+            background: #333;
+            height: var(--desk-height, 150px);
+            position: absolute;
+            right: -50px;
+            bottom: 0px;
+        }
+
+        .desk-top {
+            width: 120px;
+            height: 8px;
+            background: #333;
+            position: absolute;
+            left: -60px;
+            bottom: var(--desk-height, 150px);
+            transition: all 0.5s ease;
+        }
+
+
+
+
+
+        h1 {
+            color: #3396D3;
+            margin-bottom: 10px;
+            font-size: 2.2rem;
+            font-weight: 600;
+        }
+
+        .subtitle {
+            color: #E1AD01;
+            margin-bottom: 40px;
+            font-size: 1.1rem;
+        }
+
+        .input-group {
+            margin-bottom: 30px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 10px;
+            color: #3396D3;
+            font-weight: 500;
+            font-size: 1.1rem;
+        }
+
+        .input-container {
+            position: relative;
+            display: inline-block;
+            width: 100%;
+        }
+
+        input[type="number"] {
+            width: 100%;
+            padding: 15px 20px 15px 60px;
+            border: 2px solid #EBCB90;
+            border-radius: 12px;
+            font-size: 1.2rem;
+            text-align: center;
+            transition: all 0.3s ease;
+            background: #FFF0CE;
+            text-indent: -20px;
+            color: #333;
+        }
+
+        input[type="number"]:focus {
+            outline: none;
+            border-color: #3396D3;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(51, 150, 211, 0.1);
+        }
+
+        .unit {
+            position: absolute;
+            right: 55px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #EBCB90;
+            font-size: 1.1rem;
+            pointer-events: none;
+        }
+
+        .calculate-btn {
+            background: linear-gradient(135deg, #3396D3 0%, #EBCB90 100%);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-bottom: 30px;
+            width: 100%;
+        }
+
+        .calculate-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(51, 150, 211, 0.3);
+        }
+
+        .calculate-btn:active {
+            transform: translateY(0);
+        }
+
+        .result {
+            background: #ffffff;
+            border-radius: 15px;
+            padding: 25px;
+            margin-top: 20px;
+            display: none;
+        }
+
+        .result.show {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .result-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .result-item:last-child {
+            border-bottom: none;
+        }
+
+        .result-label {
+            font-weight: 500;
+            color: grey;
+        }
+
+        .result-value {
+            font-weight: 600;
+            color: #3396D3;
+            font-size: 1.2rem;
+        }
+
+        .alert {
+            background: #FFF0CE;
+            border: 2px solid #EBCB90;
+            color: #E1AD01;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .alert.show {
+            display: block;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(-20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        .info-section {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #ffffff;
+        }
+
+        .info-text {
+            color: grey;
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+
+        @media (max-width: 900px) {
+            body {
+                flex-direction: column;
+                gap: 20px;
+            }
+            
+            .furniture-visual {
+                min-width: 300px;
+                height: 300px;
+                flex-direction: column;
+                gap: 20px;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 30px 20px;
+            }
+            
+            h1 {
+                font-size: 1.8rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📐 데스크 셋업 계산기</h1>
+        <p class="subtitle">당신의 키에 맞는 책상과 의자 높이를 계산해드립니다!</p>
+        
+        <div class="alert" id="alert">
+            <span id="alert-message"></span>
+        </div>
+
+        <div class="input-group">
+            
+            <div class="input-container">
+                <input type="number" id="height" placeholder="예: 170" min="54" max="290">
+                <span class="unit">cm</span>
+            </div>
+        </div>
+
+        <button class="calculate-btn" onclick="calculateHeight()">높이 계산하기</button>
+
+        <div class="result" id="result">
+            <div class="result-item">
+                <span class="result-label">🪑  의자 높이</span>
+                <span class="result-value" id="chair-height">- cm</span>
+            </div>
+            <div class="result-item">
+                <span class="result-label">🖥️  책상 높이</span>
+                <span class="result-value" id="desk-height">- cm</span>
+            </div>
+        </div>
+
+        <div class="info-section">
+            <p class="info-text">
+                💡 이 계산은 일반적인 인체공학적 기준을 바탕으로 합니다.<br>
+                개인적인 편안함에 따라 조정이 필요할 수 있습니다.
+            </p>
+        </div>
+    </div>
+
+    <div class="furniture-visual">
+        <div class="chair">
+            <div class="chair-seat"></div>
+            <div class="hamster"></div>
+            <div class="chair-leg-left"></div>
+            <div class="chair-leg-right"></div>
+        </div>
+        <div class="desk">
+            <div class="desk-top"></div>
+            <div class="desk-leg-left"></div>
+            <div class="desk-leg-right"></div>
+        </div>
+    </div>
+
+
+    <script>
+        function showAlert(message) {
+            const alert = document.getElementById('alert');
+            const alertMessage = document.getElementById('alert-message');
+            alertMessage.textContent = message;
+            alert.classList.add('show');
+            
+            setTimeout(() => {
+                alert.classList.remove('show');
+            }, 3000);
+        }
+
+        function calculateHeight() {
+            const heightInput = document.getElementById('height');
+            const height = parseFloat(heightInput.value);
+            
+            
+            if (!height || isNaN(height)) {
+                showAlert('올바른 키를 입력해주세요.');
+                return;
+            }
+            
+            if (height < 54) {
+                showAlert('더 높은 값을 입력해주세요. (최소 54cm)');
+                return;
+            }
+            
+            if (height > 290) {
+                showAlert('더 낮은 값을 입력해주세요. (최대 290cm)');
+                return;
+            }
+            
+
+            const chairHeight = Math.round(height * 0.26);
+            const deskHeight = chairHeight + 27;
+            
+            
+            document.getElementById('chair-height').textContent = chairHeight + ' cm';
+            document.getElementById('desk-height').textContent = deskHeight + ' cm';
+            
+            
+            document.documentElement.style.setProperty('--chair-height', (chairHeight * 3) + 'px');
+            document.documentElement.style.setProperty('--desk-height', (deskHeight * 3) + 'px');
+            
+            const result = document.getElementById('result');
+            result.classList.add('show');
+            
+            
+            result.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+        
+        
+        document.getElementById('height').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                calculateHeight();
+            }
+        });
+        
+       
+        document.getElementById('height').addEventListener('input', function() {
+            const height = parseFloat(this.value);
+            if (height && (height < 54 || height > 290)) {
+                this.style.borderColor = '#dc3545';
+            } else {
+                this.style.borderColor = '#e1e5e9';
+            }
+        });
+    </script>
+</body>
+</html>
